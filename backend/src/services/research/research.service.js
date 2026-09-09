@@ -1,6 +1,7 @@
 import { validateExternalUrl } from "../../utils/url.js";
 import { crawlSite } from "./crawler.js";
 import { rankLinks } from "./linkRanker.js";
+import { generateCompanyBrief } from "../generation/companyBriefGenerator.js";
 import { extractPagesContent } from "./pageExtractor.js";
 
 export const researchCompany = async (companyUrl) => {
@@ -36,30 +37,19 @@ export const researchCompany = async (companyUrl) => {
         selectedPages.push(pages[0]);
       }
     } catch (error) {
-      console.error(
-        `Could not retrieve ${link.href}:`,
-        error.message
-      );
+      console.error(`Could not retrieve ${link.href}:`, error.message);
     }
   }
 
   // 7. Combine all crawled pages
-  const allPages = [
-    ...homepagePages,
-    ...selectedPages,
-  ];
+  const allPages = [...homepagePages, ...selectedPages];
 
   // 8. Clean/extract useful page content
   const cleanPages = extractPagesContent(allPages);
-
+  const companyBrief = await generateCompanyBrief(cleanPages);
   // 9. Identify pages that failed
   const failedLinks = selectedLinks
-    .filter(
-      (link) =>
-        !selectedPages.some(
-          (page) => page.url === link.href
-        )
-    )
+    .filter((link) => !selectedPages.some((page) => page.url === link.href))
     .map((link) => link.href);
 
   return {
@@ -68,5 +58,6 @@ export const researchCompany = async (companyUrl) => {
     discoveredLinks: rankedLinks,
     selectedLinks,
     failedLinks,
+    companyBrief,
   };
 };
