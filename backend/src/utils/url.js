@@ -43,7 +43,6 @@ export const validateExternalUrl = async (url) => {
 
   const hostname = parsedUrl.hostname;
 
-  // Direct IP address
   if (net.isIP(hostname)) {
     if (isPrivateIp(hostname)) {
       throw new Error("Private or loopback URLs are not allowed");
@@ -52,16 +51,69 @@ export const validateExternalUrl = async (url) => {
     return true;
   }
 
-  // Resolve hostname to IP addresses
   const addresses = await dns.lookup(hostname, {
     all: true,
   });
 
   for (const address of addresses) {
     if (isPrivateIp(address.address)) {
-      throw new Error("URL resolves to a private or loopback address");
+      throw new Error(
+        "URL resolves to a private or loopback address"
+      );
     }
   }
 
   return true;
+};
+
+export const normalizeUrl = (url, baseUrl) => {
+  try {
+    const absoluteUrl = new URL(url, baseUrl);
+
+    if (!["http:", "https:"].includes(absoluteUrl.protocol)) {
+      return null;
+    }
+
+    absoluteUrl.hash = "";
+
+    return absoluteUrl.href;
+  } catch {
+    return null;
+  }
+};
+
+export const isSameDomain = (url, baseUrl) => {
+  try {
+    const target = new URL(url);
+    const base = new URL(baseUrl);
+
+    return target.hostname === base.hostname;
+  } catch {
+    return false;
+  }
+};
+
+export const getValidInternalLinks = (links, baseUrl) => {
+  const uniqueLinks = new Map();
+
+  for (const link of links) {
+    const normalizedUrl = normalizeUrl(link.href, baseUrl);
+
+    if (!normalizedUrl) {
+      continue;
+    }
+
+    if (!isSameDomain(normalizedUrl, baseUrl)) {
+      continue;
+    }
+
+    if (!uniqueLinks.has(normalizedUrl)) {
+      uniqueLinks.set(normalizedUrl, {
+        text: link.text?.trim() || "",
+        href: normalizedUrl,
+      });
+    }
+  }
+
+  return Array.from(uniqueLinks.values());
 };

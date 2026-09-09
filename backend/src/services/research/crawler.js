@@ -1,11 +1,25 @@
 import { CheerioCrawler } from "crawlee";
 import { getValidInternalLinks } from "../../utils/url.js";
 
-export const crawlPage = async (url) => {
-  let result = null;
+export const crawlSite = async (startUrl, maxRequests = 10) => {
+  const pages = [];
 
   const crawler = new CheerioCrawler({
-    maxRequestsPerCrawl: 1,
+    maxRequestsPerCrawl: maxRequests,
+
+    // Don't send too many requests too quickly
+    maxConcurrency: 2,
+
+    // Wait before retrying a failed request
+    minConcurrency: 1,
+
+    requestHandlerTimeoutSecs: 30,
+
+    // Crawlee retries failed requests automatically
+    maxRequestRetries: 2,
+
+    // Respect robots.txt
+    respectRobotsTxtFile: true,
 
     async requestHandler({ $, request }) {
       const title = $("title").text().trim();
@@ -15,7 +29,10 @@ export const crawlPage = async (url) => {
         .get()
         .filter(Boolean);
 
-      const text = $("body").text().replace(/\s+/g, " ").trim();
+      const text = $("body")
+        .text()
+        .replace(/\s+/g, " ")
+        .trim();
 
       const links = $("a[href]")
         .map((_, element) => ({
@@ -24,23 +41,31 @@ export const crawlPage = async (url) => {
         }))
         .get()
         .filter((link) => link.href);
-      const internalLinks = getValidInternalLinks(links, request.url);
-      result = {
+
+      const internalLinks = getValidInternalLinks(
+        links,
+        request.url
+      );
+
+      pages.push({
         url: request.url,
         title,
         headings,
         text,
         links,
         internalLinks,
-      };
+      });
     },
 
-    failedRequestHandler({ request }) {
-      throw new Error(`Failed to crawl: ${request.url}`);
+    failedRequestHandler({ request, error }) {
+      console.error(
+        `Failed to crawl ${request.url}:`,
+        error?.message || "Unknown error"
+      );
     },
   });
 
-  await crawler.run([url]);
+  await crawler.run([startUrl]);
 
-  return result;
+  return pages;
 };

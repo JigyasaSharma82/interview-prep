@@ -1,20 +1,14 @@
-import { crawlPage } from "./crawler.js";
+import { crawlSite } from "./crawler.js";
 
-const result = await crawlPage("https://example.com");
+const pages = await crawlSite("https://example.com");
 
-console.log("\n===== CRAWL RESULT =====\n");
+console.log("\n===== CRAWLED PAGES =====\n");
 
-console.log("URL:", result.url);
-console.log("TITLE:", result.title);
+for (const page of pages) {
+  console.log("URL:", page.url);
+  console.log("TITLE:", page.title);
+  console.log("HEADINGS:", page.headings);
+  console.log("-------------------------");
+}
 
-console.log("\nHEADINGS:");
-console.log(result.headings);
-
-console.log("\nTEXT:");
-console.log(result.text);
-
-console.log("\nLINKS:");
-console.log(result.links);
-
-console.log("\nINTERNAL LINKS:");
-console.log(result.internalLinks);
+console.log("\nTOTAL PAGES:", pages.length);
