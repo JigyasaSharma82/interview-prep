@@ -13,10 +13,10 @@ export const crawlSite = async (startUrl, maxRequests = 10) => {
     // Wait before retrying a failed request
     minConcurrency: 1,
 
-    requestHandlerTimeoutSecs: 30,
+    requestHandlerTimeoutSecs: 15,
 
     // Crawlee retries failed requests automatically
-    maxRequestRetries: 2,
+    maxRequestRetries: 1,
 
     // Respect robots.txt
     respectRobotsTxtFile: true,

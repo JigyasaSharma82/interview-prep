@@ -1,4 +1,4 @@
-import { ai, model } from "./gemini.js";
+import { generateContentWithRetry, model } from "./gemini.js";
 
 const companyBriefSchema = {
   type: "object",
@@ -52,7 +52,7 @@ RESEARCH:
 ${researchText}
 `;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model,
     contents: prompt,
     config: {

@@ -1,3 +1,4 @@
 export function getCurrentUser() {
-  return null;
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem("prep_token");
 }
