@@ -12,3 +12,9 @@ console.log(result.headings);
 
 console.log("\nTEXT:");
 console.log(result.text);
+
+console.log("\nLINKS:");
+console.log(result.links);
+
+console.log("\nINTERNAL LINKS:");
+console.log(result.internalLinks);

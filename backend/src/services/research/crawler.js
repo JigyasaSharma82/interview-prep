@@ -1,4 +1,5 @@
 import { CheerioCrawler } from "crawlee";
+import { getValidInternalLinks } from "../../utils/url.js";
 
 export const crawlPage = async (url) => {
   let result = null;
@@ -23,13 +24,14 @@ export const crawlPage = async (url) => {
         }))
         .get()
         .filter((link) => link.href);
-
+      const internalLinks = getValidInternalLinks(links, request.url);
       result = {
         url: request.url,
         title,
         headings,
         text,
         links,
+        internalLinks,
       };
     },
 
