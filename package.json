@@ -1,0 +1,10 @@
+{
+  "name": "ai-interview-prep",
+  "private": true,
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "dev:frontend": "npm --workspace frontend run dev",
+    "dev:backend": "npm --workspace backend run dev",
+    "test:backend": "npm --workspace backend test"
+  }
+}
