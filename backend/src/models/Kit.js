@@ -110,6 +110,27 @@ const kitSchema = new mongoose.Schema(
       index: true,
     },
 
+    generation_status: {
+      type: String,
+      enum: ["generating", "completed", "failed"],
+      default: "generating",
+    },
+
+    generation_key: {
+      type: String,
+      required: true,
+    },
+
+    generation_stage: {
+      type: String,
+      default: "queued",
+    },
+
+    generation_error: {
+      type: String,
+      default: null,
+    },
+
     source: {
       company: {
         type: String,
@@ -209,6 +230,16 @@ const kitSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+  }
+);
+
+kitSchema.index(
+  { user_id: 1, generation_key: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      generation_status: "generating",
+    },
   }
 );
 

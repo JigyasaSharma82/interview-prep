@@ -86,6 +86,18 @@ export const validateKit = (kit) => {
   return kitSchema.parse(kit);
 };
 export const validateKitReferences = (kit) => {
+  const assertUniqueIds = (items, label) => {
+    const ids = items.map((item) => item.id);
+
+    if (new Set(ids).size !== ids.length) {
+      throw new Error(`${label} contain duplicate IDs`);
+    }
+  };
+
+  assertUniqueIds(kit.role.requirements, "Requirements");
+  assertUniqueIds(kit.questions, "Questions");
+  assertUniqueIds(kit.flashcards, "Flashcards");
+
   const requirementIds = new Set(
     kit.role.requirements.map(
       (requirement) => requirement.id
@@ -93,6 +105,12 @@ export const validateKitReferences = (kit) => {
   );
 
   for (const question of kit.questions) {
+    if (question.requirement_ids.length !== 1) {
+      throw new Error(
+        `Question ${question.id} must reference exactly one requirement`
+      );
+    }
+
     for (const requirementId of question.requirement_ids) {
       if (!requirementIds.has(requirementId)) {
         throw new Error(
@@ -118,14 +136,57 @@ export const validateKitReferences = (kit) => {
     )
   );
 
+  const scheduledQuestionIds = [];
+  const scheduleDays = new Set();
+
   for (const day of kit.schedule.days) {
+    if (day.day > kit.schedule.days_available) {
+      throw new Error(
+        `Schedule day ${day.day} exceeds days_available`
+      );
+    }
+
+    if (scheduleDays.has(day.day)) {
+      throw new Error(`Schedule contains duplicate day ${day.day}`);
+    }
+
+    scheduleDays.add(day.day);
+
     for (const questionId of day.question_ids) {
       if (!questionIds.has(questionId)) {
         throw new Error(
           `Schedule day ${day.day} references unknown question ${questionId}`
         );
       }
+
+      scheduledQuestionIds.push(questionId);
     }
+  }
+
+  if (
+    new Set(scheduledQuestionIds).size !== scheduledQuestionIds.length ||
+    new Set(scheduledQuestionIds).size !== questionIds.size
+  ) {
+    throw new Error(
+      "Every question must be scheduled exactly once"
+    );
+  }
+
+  const coveredMustHaveIds = new Set(
+    kit.questions.flatMap((question) => question.requirement_ids)
+  );
+  const expectedUncoveredIds = kit.role.requirements
+    .filter((requirement) => requirement.priority === "must")
+    .filter((requirement) => !coveredMustHaveIds.has(requirement.id))
+    .map((requirement) => requirement.id);
+
+  if (
+    JSON.stringify([...expectedUncoveredIds].sort()) !==
+    JSON.stringify([...kit.coverage.uncovered_requirement_ids].sort())
+  ) {
+    throw new Error(
+      "Coverage metadata does not match question references"
+    );
   }
 
   return true;

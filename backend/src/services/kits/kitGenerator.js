@@ -8,21 +8,43 @@ import {
 import { generateFlashcards } from "../generation/flashcardGenerator.js";
 import { allocateSchedule } from "../scheduling/scheduleAllocator.js";
 import { validateCompleteKit } from "./kitValidator.js";
+import { GenerationError } from "../../utils/errors.js";
 
 export const generateKit = async ({
   jd,
   company_url,
   days,
+  onStage = async () => {},
 }) => {
+  const runStage = async (stage, operation) => {
+    await onStage(stage);
+
+    try {
+      return await operation();
+    } catch (error) {
+      if (error instanceof GenerationError) {
+        throw error;
+      }
+
+      throw new GenerationError(stage, error.message, {
+        cause: error,
+      });
+    }
+  };
+
   // 1. Extract requirements from JD
-  const role = await extractRequirements(jd);
+  const role = await runStage("requirements", () =>
+    extractRequirements(jd)
+  );
 
   // 2. Research company
-  const research = await researchCompany(company_url);
+  const research = await runStage("research", () =>
+    researchCompany(company_url)
+  );
 
   // 3. Generate initial questions
-  const generated = await generateQuestions(
-    role.requirements
+  const generated = await runStage("questions", () =>
+    generateQuestions(role.requirements)
   );
 
   // 4. Normalize questions and assign stable IDs
@@ -60,10 +82,10 @@ export const generateKit = async ({
         )
       );
 
-    const extraGenerated =
-      await generateQuestionsForRequirements(
-        uncoveredRequirements
-      );
+    const extraGenerated = await runStage(
+      "coverage-questions",
+      () => generateQuestionsForRequirements(uncoveredRequirements)
+    );
 
     const nextQuestions =
       extraGenerated.questions.map(
@@ -95,7 +117,8 @@ export const generateKit = async ({
   if (
     coverage.uncovered_requirement_ids.length > 0
   ) {
-    throw new Error(
+    throw new GenerationError(
+      "coverage",
       `Unable to cover must-have requirements: ${coverage.uncovered_requirement_ids.join(
         ", "
       )}`
@@ -103,10 +126,10 @@ export const generateKit = async ({
   }
 
   // 8. Generate flashcards
-  const generatedFlashcards =
-    await generateFlashcards(
-      role.requirements
-    );
+  const generatedFlashcards = await runStage(
+    "flashcards",
+    () => generateFlashcards(role.requirements)
+  );
 
   const flashcards =
     generatedFlashcards.flashcards.map(
@@ -121,10 +144,8 @@ export const generateKit = async ({
     );
 
   // 9. Allocate deterministic schedule
-  const schedule = allocateSchedule(
-    role.requirements,
-    questions,
-    days
+  const schedule = await runStage("schedule", () =>
+    allocateSchedule(role.requirements, questions, days)
   );
 
   // 10. Build complete kit
@@ -174,8 +195,9 @@ export const generateKit = async ({
   };
 
   // 11. Validate the complete kit
-  const validatedKit =
-    validateCompleteKit(kit);
+  const validatedKit = await runStage("validation", () =>
+    validateCompleteKit(kit)
+  );
 
   return validatedKit;
 };

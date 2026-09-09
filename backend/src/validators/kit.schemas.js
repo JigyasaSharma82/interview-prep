@@ -103,4 +103,4 @@ export const updateKitSchema = z.object({
       ),
     })
     .optional(),
-});
+}).strict();

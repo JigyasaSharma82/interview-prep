@@ -14,4 +14,20 @@ const env = {
   frontendUrl: process.env.FRONTEND_URL || "http://localhost:3000",
 };
 
+export const validateEnv = () => {
+  const required = [
+    ["MONGODB_URI", env.mongodbUri],
+    ["JWT_SECRET", env.jwtSecret],
+  ];
+  const missing = required
+    .filter(([, value]) => !value)
+    .map(([name]) => name);
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}`
+    );
+  }
+};
+
 export default env;

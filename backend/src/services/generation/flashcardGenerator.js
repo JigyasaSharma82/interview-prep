@@ -1,4 +1,4 @@
-import { ai, model } from "./gemini.js";
+import { generateContentWithRetry, model } from "./gemini.js";
 
 const flashcardSchema = {
   type: "object",
@@ -71,7 +71,7 @@ RULES:
 11. Return only valid JSON matching the schema.
 `;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model,
     contents: prompt,
     config: {

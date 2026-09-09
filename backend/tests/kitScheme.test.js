@@ -81,4 +81,12 @@ describe("updateKitSchema", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("rejects unknown update fields", () => {
+    const result = updateKitSchema.safeParse({
+      unexpected: true,
+    });
+
+    expect(result.success).toBe(false);
+  });
 });

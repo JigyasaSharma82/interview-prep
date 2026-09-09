@@ -9,6 +9,13 @@ const HIGH_VALUE_KEYWORDS = [
   "work-with-us",
   "openings",
   "vacancies",
+  "interview",
+  "interview-process",
+  "hiring-process",
+  "assessment",
+  "technical-screen",
+  "onsite",
+  "candidate",
 ];
 
 const MEDIUM_VALUE_KEYWORDS = [

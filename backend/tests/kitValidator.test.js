@@ -148,4 +148,37 @@ describe("kitValidator", () => {
       validateCompleteKit(kit)
     ).toThrow();
   });
+
+  it("rejects duplicate question IDs", () => {
+    const kit = structuredClone(validKit);
+
+    kit.questions.push({
+      ...kit.questions[0],
+      prompt: "A second question with the same ID.",
+    });
+
+    expect(() => validateCompleteKit(kit)).toThrow(
+      "duplicate IDs"
+    );
+  });
+
+  it("rejects questions scheduled more than once", () => {
+    const kit = structuredClone(validKit);
+
+    kit.schedule.days[0].question_ids.push("q1");
+
+    expect(() => validateCompleteKit(kit)).toThrow(
+      "scheduled exactly once"
+    );
+  });
+
+  it("rejects inconsistent coverage metadata", () => {
+    const kit = structuredClone(validKit);
+
+    kit.coverage.uncovered_requirement_ids = ["r1"];
+
+    expect(() => validateCompleteKit(kit)).toThrow(
+      "Coverage metadata"
+    );
+  });
 });

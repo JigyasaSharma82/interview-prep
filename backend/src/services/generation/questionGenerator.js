@@ -1,4 +1,4 @@
-import { ai, model } from "./gemini.js";
+import { generateContentWithRetry, model } from "./gemini.js";
 
 const questionSchema = {
   type: "object",
@@ -87,7 +87,7 @@ RULES:
 14. Return only valid JSON matching the schema.
 `;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model,
     contents: prompt,
     config: {
@@ -143,7 +143,7 @@ RULES:
 12. Return only valid JSON.
 `;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContentWithRetry({
     model,
     contents: prompt,
     config: {
