@@ -1,49 +1,181 @@
 import { extractRequirements } from "../generation/requirementExtractor.js";
 import { researchCompany } from "../research/research.service.js";
+import { checkCoverage } from "../coverage/coverageChecker.js";
+import {
+  generateQuestions,
+  generateQuestionsForRequirements,
+} from "../generation/questionGenerator.js";
+import { generateFlashcards } from "../generation/flashcardGenerator.js";
+import { allocateSchedule } from "../scheduling/scheduleAllocator.js";
+import { validateCompleteKit } from "./kitValidator.js";
 
-export const generateKit = async ({ jd, company_url, days }) => {
-  // Step 1: Extract requirements from JD
+export const generateKit = async ({
+  jd,
+  company_url,
+  days,
+}) => {
+  // 1. Extract requirements from JD
   const role = await extractRequirements(jd);
 
-  // Step 2: Research company
+  // 2. Research company
   const research = await researchCompany(company_url);
 
-  return {
+  // 3. Generate initial questions
+  const generated = await generateQuestions(
+    role.requirements
+  );
+
+  // 4. Normalize questions and assign stable IDs
+  let questions = generated.questions.map(
+    (question, index) => ({
+      id: `q${index + 1}`,
+      requirement_ids: [
+        question.requirement_id,
+      ],
+      category: question.category,
+      prompt: question.prompt,
+      answer_outline: question.answer_outline,
+      difficulty: question.difficulty,
+    })
+  );
+
+  // 5. Check initial coverage
+  let coverage = checkCoverage(
+    role.requirements,
+    questions
+  );
+
+  let passes = 1;
+
+  // 6. Generate additional questions for
+  // uncovered must-have requirements
+  while (
+    coverage.uncovered_requirement_ids.length > 0 &&
+    passes < 3
+  ) {
+    const uncoveredRequirements =
+      role.requirements.filter((requirement) =>
+        coverage.uncovered_requirement_ids.includes(
+          requirement.id
+        )
+      );
+
+    const extraGenerated =
+      await generateQuestionsForRequirements(
+        uncoveredRequirements
+      );
+
+    const nextQuestions =
+      extraGenerated.questions.map(
+        (question, index) => ({
+          id: `q${questions.length + index + 1}`,
+          requirement_ids: [
+            question.requirement_id,
+          ],
+          category: question.category,
+          prompt: question.prompt,
+          answer_outline:
+            question.answer_outline,
+          difficulty: question.difficulty,
+        })
+      );
+
+    questions.push(...nextQuestions);
+
+    // Check coverage again
+    coverage = checkCoverage(
+      role.requirements,
+      questions
+    );
+
+    passes++;
+  }
+
+  // 7. Do not allow an incomplete kit
+  if (
+    coverage.uncovered_requirement_ids.length > 0
+  ) {
+    throw new Error(
+      `Unable to cover must-have requirements: ${coverage.uncovered_requirement_ids.join(
+        ", "
+      )}`
+    );
+  }
+
+  // 8. Generate flashcards
+  const generatedFlashcards =
+    await generateFlashcards(
+      role.requirements
+    );
+
+  const flashcards =
+    generatedFlashcards.flashcards.map(
+      (flashcard, index) => ({
+        id: `f${index + 1}`,
+        front: flashcard.front,
+        back: flashcard.back,
+        requirement_ids: [
+          flashcard.requirement_id,
+        ],
+      })
+    );
+
+  // 9. Allocate deterministic schedule
+  const schedule = allocateSchedule(
+    role.requirements,
+    questions,
+    days
+  );
+
+  // 10. Build complete kit
+  const kit = {
     source: {
       company: "",
       company_url,
       role: role.title,
       location: "",
       jd_chars: jd.length,
-      researched_at: new Date().toISOString(),
-      pages_used: research.pages.map((page) => page.url),
+      researched_at:
+        new Date().toISOString(),
+      pages_used: research.pages.map(
+        (page) => page.url
+      ),
     },
 
     company_brief: {
-      summary: research.companyBrief.summary,
-      what_they_do: research.companyBrief.what_they_do,
-      sources: research.pages.map((page) => page.url),
+      summary:
+        research.companyBrief.summary,
+      what_they_do:
+        research.companyBrief.what_they_do,
+      sources: research.pages.map(
+        (page) => page.url
+      ),
     },
 
     role: {
       title: role.title,
       seniority: role.seniority,
-      responsibilities: role.responsibilities,
+      responsibilities:
+        role.responsibilities,
       requirements: role.requirements,
     },
 
-    questions: [],
+    questions,
 
-    flashcards: [],
+    flashcards,
 
-    schedule: {
-      days_available: days,
-      days: [],
-    },
+    schedule,
 
     coverage: {
-      uncovered_requirement_ids: [],
-      passes: 0,
+      uncovered_requirement_ids:
+        coverage.uncovered_requirement_ids,
+      passes,
     },
   };
+
+  // 11. Validate the complete kit
+  const validatedKit =
+    validateCompleteKit(kit);
+
+  return validatedKit;
 };

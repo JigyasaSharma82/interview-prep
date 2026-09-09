@@ -1,8 +1,8 @@
 import express from "express";
-import { createKit } from "../controllers/kit.controller.js";
+import { createKit, getKits, getKitById, updateKit, deleteKit } from "../controllers/kit.controller.js";
 import { authenticate } from "../middleware/auth.middleware.js";
 import { validate } from "../middleware/validate.middleware.js";
-import { createKitSchema } from "../validators/kit.schemas.js";
+import { createKitSchema, updateKitSchema } from "../validators/kit.schemas.js";
 
 const router = express.Router();
 
@@ -12,5 +12,25 @@ router.post(
   validate(createKitSchema),
   createKit
 );
-
+router.get(
+  "/",
+  authenticate,
+  getKits
+);
+router.get(
+  "/:kitId",
+  authenticate,
+  getKitById
+);
+router.put(
+  "/:kitId",
+  authenticate,
+  validate(updateKitSchema),
+  updateKit
+);
+router.delete(
+  "/:kitId",
+  authenticate,
+  deleteKit
+);
 export default router;
