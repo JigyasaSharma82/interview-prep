@@ -1,5 +1,5 @@
 export async function apiRequest(path, options = {}) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://interview-prep-6-gx3i.onrender.com/";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://interview-prep-6-gx3i.onrender.com";
   const token = typeof window !== "undefined"
     ? window.localStorage.getItem("prep_token")
     : null;
