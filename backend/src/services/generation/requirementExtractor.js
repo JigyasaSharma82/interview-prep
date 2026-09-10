@@ -63,8 +63,10 @@ IMPORTANT RULES:
 6. Mark optional, preferred, bonus, or nice-to-have items as "nice".
 7. Classify each requirement as technical, behavioral, domain, or other.
 8. Separate responsibilities from requirements.
-9. Return valid JSON matching the requested schema.
-10. Do not infer seniority from years of experience. If seniority is not explicitly stated, return an empty string.
+9. Use the job description's actual section headings and wording when assigning priority. Treat Requirements, Required, Must have, Essential, and Mandatory wording as "must" only when the surrounding item is explicitly required. Treat Nice to Have, Good to Have, Preferred, Bonus, and Plus wording as "nice" only when the surrounding item is explicitly optional or preferred.
+10. Do not invent a priority when the wording is ambiguous. In ambiguous contexts, preserve only the priority supported by the job description context.
+11. Return valid JSON matching the requested schema.
+12. Do not infer seniority from years of experience. If seniority is not explicitly stated, return an empty string.
 
 JOB DESCRIPTION:
 
