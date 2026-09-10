@@ -5,9 +5,11 @@ import authRoutes from "./routes/auth.routes.js";
 import kitRoutes from "./routes/kit.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import { rateLimit } from "./middleware/rateLimit.middleware.js";
+
 const app = express();
 
 app.disable("x-powered-by");
+
 app.use((_req, res, next) => {
   res.set({
     "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
@@ -15,13 +17,14 @@ app.use((_req, res, next) => {
     "X-Frame-Options": "DENY",
     "Referrer-Policy": "no-referrer",
   });
+
   next();
 });
 
 app.use(
   cors({
     origin: [
-      https://interview-prep-frontend-omega.vercel.app/,
+      env.frontendUrl,
       ...(env.nodeEnv === "development"
         ? ["http://localhost:3000", "http://127.0.0.1:3000"]
         : []),
@@ -31,12 +34,21 @@ app.use(
 );
 
 app.use(express.json({ limit: "1mb" }));
-app.use(rateLimit({ windowMs: 60_000, max: 120 }));
+
+app.use(
+  rateLimit({
+    windowMs: 60_000,
+    max: 120,
+  })
+);
+
 app.use((req, res, next) => {
   console.log(`[request] ${req.method} ${req.originalUrl}`);
 
   res.on("finish", () => {
-    console.log(`[response] ${req.method} ${req.originalUrl} ${res.statusCode}`);
+    console.log(
+      `[response] ${req.method} ${req.originalUrl} ${res.statusCode}`
+    );
   });
 
   next();
