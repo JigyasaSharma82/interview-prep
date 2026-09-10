@@ -1,9 +1,9 @@
 {
-  "usableSessionsCount": 4,
+  "usableSessionsCount": 1,
   "retiredSessionsCount": 0,
   "sessions": [
     {
-      "id": "session_zY4VWOgZhh",
+      "id": "session_k5MyUiUcrd",
       "cookieJar": {
         "version": "tough-cookie@6.0.2",
         "storeType": "MemoryCookieStore",
@@ -16,118 +16,8 @@
       "userData": {},
       "maxErrorScore": 3,
       "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-09-10T10:01:40.947Z",
-      "createdAt": "2026-09-10T09:11:40.947Z",
-      "usageCount": 1,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_O9RAvw7Kfq",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.2",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-09-10T10:01:44.594Z",
-      "createdAt": "2026-09-10T09:11:44.594Z",
-      "usageCount": 1,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_aT8oei1QAU",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.2",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-09-10T10:04:00.893Z",
-      "createdAt": "2026-09-10T09:14:00.893Z",
-      "usageCount": 1,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_W9ckWqvXMf",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.2",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": [
-          {
-            "key": "__Secure-STRP",
-            "value": "ANmZwa1WPGdcaXR-mWr5X2KlPAa1wyfI8TdTnz0m6LmFe3bQXIQUU34XOPdNk1hwO4R3Ra1_YCsIwVJ0yaB_5M9XKkfKfaKXR-B8",
-            "expires": "2026-09-10T09:21:59.000Z",
-            "domain": "google.com",
-            "path": "/",
-            "secure": true,
-            "hostOnly": false,
-            "creation": "2026-09-10T09:17:01.088Z",
-            "lastAccessed": "2026-09-10T09:17:01.088Z",
-            "sameSite": "strict"
-          },
-          {
-            "key": "SEARCH_SAMESITE",
-            "value": "CgQI4qEB",
-            "expires": "2027-03-09T09:16:59.000Z",
-            "domain": "google.com",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-09-10T09:17:01.094Z",
-            "lastAccessed": "2026-09-10T09:17:01.094Z",
-            "sameSite": "strict"
-          },
-          {
-            "key": "AEC",
-            "value": "AdJVEauGQz4Yu81KIRi4xwyCuYpLUj_E94SYLmoZ2YMeJcDMtOBrDl8DLA",
-            "expires": "2027-03-09T09:16:59.000Z",
-            "domain": "google.com",
-            "path": "/",
-            "secure": true,
-            "httpOnly": true,
-            "hostOnly": false,
-            "creation": "2026-09-10T09:17:01.096Z",
-            "lastAccessed": "2026-09-10T09:17:01.096Z",
-            "sameSite": "lax"
-          },
-          {
-            "key": "NID",
-            "value": "CvsBCAESrQEBp2sxrh8edb9qcY-1z17MaSsiHeTbW8gxRFznWrgV4Ki0bG7pzCcaTyxf8EVLoCisom3SVunF9uW7pROCKbtVgTwd59hXJnQNgDakPpXDZJx60tk25qFuc9PUxg3CInC8P4r8n8GD2OOmuq405Q-bopJP6xfEmuvb7oFpoerTdzwsGyCGtW5QPcRRhKkdWtLeO9kFMA1VxZecyA1YZVt6_jqHxizciCLFgP82SigBMkUBDiveEaoIcrt91tYTJEIEVRwTOY7knq1jHjQEgVmXYtJFDcFR8bn4Smw_h6ZrSDXVwAYH-35HXEpYYoOyvaHHcU5C6gk",
-            "expires": "2027-03-12T09:16:59.000Z",
-            "domain": "google.com",
-            "path": "/",
-            "secure": true,
-            "httpOnly": true,
-            "hostOnly": false,
-            "creation": "2026-09-10T09:17:01.096Z",
-            "lastAccessed": "2026-09-10T09:17:01.096Z",
-            "sameSite": "none"
-          }
-        ]
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-09-10T10:06:59.643Z",
-      "createdAt": "2026-09-10T09:16:59.643Z",
+      "expiresAt": "2026-09-10T10:29:39.535Z",
+      "createdAt": "2026-09-10T09:39:39.535Z",
       "usageCount": 1,
       "maxUsageCount": 50,
       "errorScore": 0

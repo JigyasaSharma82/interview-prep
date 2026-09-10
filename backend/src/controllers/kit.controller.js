@@ -216,9 +216,40 @@ export const updateKit = async (req, res, next) => {
       "schedule",
     ];
 
+    const markEdited = (value) => {
+      if (!Array.isArray(value)) return value;
+
+      return value.map((item) => ({
+        ...item,
+        content_state: {
+          ...(item.content_state || {}),
+          origin: item.content_state?.origin === "handwritten"
+            ? "handwritten"
+            : "edited",
+        },
+      }));
+    };
+
     for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
-        kit[field] = req.body[field];
+        if (field === "questions" || field === "flashcards") {
+          kit[field] = markEdited(req.body[field]);
+        } else if (field === "role") {
+          kit[field] = {
+            ...req.body[field],
+            requirements: markEdited(req.body[field].requirements),
+          };
+        } else if (field === "company_brief") {
+          kit[field] = {
+            ...req.body[field],
+            content_state: {
+              ...(req.body[field].content_state || {}),
+              origin: "edited",
+            },
+          };
+        } else {
+          kit[field] = req.body[field];
+        }
       }
     }
 

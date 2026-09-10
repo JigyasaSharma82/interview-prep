@@ -1,5 +1,20 @@
 import mongoose from "mongoose";
 
+const contentStateSchema = new mongoose.Schema(
+  {
+    origin: {
+      type: String,
+      enum: ["generated", "edited", "handwritten"],
+      default: "generated",
+    },
+    is_pinned: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { _id: false }
+);
+
 const requirementSchema = new mongoose.Schema(
   {
     id: {
@@ -19,6 +34,10 @@ const requirementSchema = new mongoose.Schema(
       type: String,
       enum: ["must", "nice"],
       required: true,
+    },
+    content_state: {
+      type: contentStateSchema,
+      default: () => ({}),
     },
   },
   { _id: false }
@@ -52,6 +71,10 @@ const questionSchema = new mongoose.Schema(
       max: 3,
       required: true,
     },
+    content_state: {
+      type: contentStateSchema,
+      default: () => ({}),
+    },
   },
   { _id: false }
 );
@@ -73,6 +96,10 @@ const flashcardSchema = new mongoose.Schema(
     requirement_ids: {
       type: [String],
       default: [],
+    },
+    content_state: {
+      type: contentStateSchema,
+      default: () => ({}),
     },
   },
   { _id: false }
@@ -171,9 +198,17 @@ const kitSchema = new mongoose.Schema(
         type: String,
         default: "",
       },
+      interview_process: {
+        type: String,
+        default: "",
+      },
       sources: {
         type: [String],
         default: [],
+      },
+      content_state: {
+        type: contentStateSchema,
+        default: () => ({}),
       },
     },
 

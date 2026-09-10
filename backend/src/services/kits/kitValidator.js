@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+const contentStateSchema = z.object({
+  origin: z.enum(["generated", "edited", "handwritten"]).default("generated"),
+  is_pinned: z.boolean().default(false),
+});
+
 const requirementSchema = z.object({
   id: z.string().regex(/^r\d+$/),
   text: z.string().min(1),
@@ -10,6 +15,7 @@ const requirementSchema = z.object({
     "other",
   ]),
   priority: z.enum(["must", "nice"]),
+  content_state: contentStateSchema.default({}),
 });
 
 const questionSchema = z.object({
@@ -17,10 +23,16 @@ const questionSchema = z.object({
   requirement_ids: z
     .array(z.string().regex(/^r\d+$/))
     .min(1),
-  category: z.string().min(1),
+  category: z.enum([
+    "technical",
+    "behavioral",
+    "system-design",
+    "company-fit",
+  ]),
   prompt: z.string().min(1),
   answer_outline: z.string().min(1),
   difficulty: z.number().int().min(1).max(3),
+  content_state: contentStateSchema.default({}),
 });
 
 const flashcardSchema = z.object({
@@ -30,6 +42,7 @@ const flashcardSchema = z.object({
   requirement_ids: z
     .array(z.string().regex(/^r\d+$/))
     .min(1),
+  content_state: contentStateSchema.default({}),
 });
 
 const scheduleDaySchema = z.object({
@@ -55,7 +68,9 @@ const kitSchema = z.object({
   company_brief: z.object({
     summary: z.string(),
     what_they_do: z.string(),
+    interview_process: z.string().default(""),
     sources: z.array(z.string().url()),
+    content_state: contentStateSchema.default({}),
   }),
 
   role: z.object({
@@ -161,6 +176,10 @@ export const validateKitReferences = (kit) => {
 
       scheduledQuestionIds.push(questionId);
     }
+  }
+
+  if (scheduleDays.size !== kit.schedule.days_available) {
+    throw new Error("Schedule must contain every requested day");
   }
 
   if (

@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+const contentStateSchema = z.object({
+  origin: z.enum(["generated", "edited", "handwritten"]).optional(),
+  is_pinned: z.boolean().optional(),
+});
+
 export const createKitSchema = z.object({
   jd: z
     .string()
@@ -35,7 +40,9 @@ export const updateKitSchema = z.object({
     .object({
       summary: z.string(),
       what_they_do: z.string(),
+      interview_process: z.string().optional(),
       sources: z.array(z.string().url()),
+      content_state: contentStateSchema.optional(),
     })
     .optional(),
 
@@ -55,6 +62,7 @@ export const updateKitSchema = z.object({
             "other",
           ]),
           priority: z.enum(["must", "nice"]),
+          content_state: contentStateSchema.optional(),
         })
       ),
     })
@@ -67,10 +75,16 @@ export const updateKitSchema = z.object({
         requirement_ids: z.array(
           z.string().regex(/^r\d+$/, "Invalid requirement ID")
         ),
-        category: z.string(),
+        category: z.enum([
+          "technical",
+          "behavioral",
+          "system-design",
+          "company-fit",
+        ]),
         prompt: z.string().min(1),
         answer_outline: z.string(),
         difficulty: z.number().int().min(1).max(3),
+        content_state: contentStateSchema.optional(),
       })
     )
     .optional(),
@@ -84,6 +98,7 @@ export const updateKitSchema = z.object({
         requirement_ids: z.array(
           z.string().regex(/^r\d+$/, "Invalid requirement ID")
         ),
+        content_state: contentStateSchema.optional(),
       })
     )
     .optional(),

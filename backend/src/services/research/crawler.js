@@ -21,7 +21,18 @@ export const crawlSite = async (startUrl, maxRequests = 10) => {
     // Respect robots.txt
     respectRobotsTxtFile: true,
 
-    async requestHandler({ $, request }) {
+    async requestHandler({ $, request, response }) {
+      const contentType = response?.headers?.["content-type"] || "";
+      const contentLength = Number(response?.headers?.["content-length"] || 0);
+
+      if (contentType && !contentType.includes("text/html")) {
+        throw new Error("Unsupported company page content type");
+      }
+
+      if (contentLength > 2_000_000) {
+        throw new Error("Company page response is too large");
+      }
+
       const title = $("title").text().trim();
 
       const headings = $("h1, h2, h3")

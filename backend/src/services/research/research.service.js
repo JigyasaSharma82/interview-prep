@@ -3,6 +3,7 @@ import { crawlSite } from "./crawler.js";
 import { rankLinks } from "./linkRanker.js";
 import { generateCompanyBrief } from "../generation/companyBriefGenerator.js";
 import { extractPagesContent } from "./pageExtractor.js";
+import { researchPublicInterviewProcess } from "./publicResearch.js";
 
 const withTimeout = (promise, milliseconds, message) =>
   Promise.race([
@@ -74,6 +75,7 @@ export const researchCompany = async (companyUrl) => {
     selectedLinks.map(async (link) => {
       try {
         console.log("🌐 CRAWLING RESEARCH PAGE:", link.href);
+        await validateExternalUrl(link.href);
 
         const pages = await withTimeout(
           crawlSite(link.href, 1),
@@ -100,8 +102,15 @@ export const researchCompany = async (companyUrl) => {
     })
   );
 
+  const publicInterviewResearch =
+    await researchPublicInterviewProcess(companyUrl);
+
   // 7. Combine all crawled pages
-  const allPages = [...homepagePages, ...selectedPages];
+  const allPages = [
+    ...homepagePages,
+    ...selectedPages,
+    ...publicInterviewResearch.pages,
+  ];
 
   console.log(
     "📚 TOTAL CRAWLED PAGES:",
@@ -149,5 +158,9 @@ export const researchCompany = async (companyUrl) => {
     selectedLinks,
     failedLinks,
     companyBrief,
+    publicInterviewResearch: {
+      sources: publicInterviewResearch.sources,
+      unavailable: publicInterviewResearch.unavailable,
+    },
   };
 };

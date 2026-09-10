@@ -23,5 +23,14 @@ export const sortPracticeItems = (items) =>
 
     if (difficultyDifference !== 0) return difficultyDifference;
 
+    const leftUpdated = left.updatedAt
+      ? new Date(left.updatedAt).getTime()
+      : 0;
+    const rightUpdated = right.updatedAt
+      ? new Date(right.updatedAt).getTime()
+      : 0;
+
+    if (leftUpdated !== rightUpdated) return leftUpdated - rightUpdated;
+
     return left.item_id.localeCompare(right.item_id);
   });

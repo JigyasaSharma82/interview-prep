@@ -83,6 +83,7 @@ export const allocateSchedule = (
   // have already been scheduled.
   const scheduledMustHave =
     new Set();
+  const scheduledQuestionIds = new Set();
 
   // First pass:
   // Put at least one question for every
@@ -101,6 +102,11 @@ export const allocateSchedule = (
       );
     }
 
+    if (scheduledQuestionIds.has(question.id)) {
+      scheduledMustHave.add(requirement.id);
+      continue;
+    }
+
     const dayIndex =
       scheduledMustHave.size %
       daysAvailable;
@@ -110,6 +116,7 @@ export const allocateSchedule = (
     );
 
     days[dayIndex].minutes += 60;
+    scheduledQuestionIds.add(question.id);
 
     scheduledMustHave.add(
       requirement.id
@@ -117,13 +124,6 @@ export const allocateSchedule = (
   }
 
   // Track questions already scheduled.
-  const scheduledQuestionIds =
-    new Set(
-      days.flatMap(
-        (day) => day.question_ids
-      )
-    );
-
   // Second pass:
   // Distribute remaining questions.
   let nextDayIndex = 0;

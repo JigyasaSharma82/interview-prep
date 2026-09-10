@@ -14,12 +14,11 @@ export const evaluate = async (cases) => {
     };
   }
 
-  const { generateKit } = await import(
-    "./services/kits/kitGenerator.js"
-  );
-
   for (const [index, testCase] of cases.entries()) {
     try {
+      const { generateKit } = await import(
+        "./services/kits/kitGenerator.js"
+      );
       const kit = await generateKit({
         jd: testCase.jd,
         company_url: testCase.company_url,
@@ -28,7 +27,9 @@ export const evaluate = async (cases) => {
 
       results.push({
         index,
+        status: "ok",
         passed: true,
+        kit,
         requirements: kit.role.requirements.length,
         questions: kit.questions.length,
         flashcards: kit.flashcards.length,
@@ -36,6 +37,7 @@ export const evaluate = async (cases) => {
     } catch (error) {
       results.push({
         index,
+        status: "failed",
         passed: false,
         error: error.message || "Evaluation failed",
       });
@@ -52,14 +54,21 @@ export const evaluate = async (cases) => {
 
 const run = async () => {
   const currentFile = fileURLToPath(import.meta.url);
-  const casesPath = path.resolve(
+  const args = process.argv.slice(2);
+  const inputIndex = args.indexOf("--input");
+  const outputIndex = args.indexOf("--output");
+  const defaultInput = path.resolve(
     path.dirname(currentFile),
     "../../cases/sample-cases.json"
   );
+  const casesPath = inputIndex >= 0 ? path.resolve(args[inputIndex + 1]) : defaultInput;
+  const outputPath = outputIndex >= 0 ? path.resolve(args[outputIndex + 1]) : null;
   const cases = JSON.parse(await fs.readFile(casesPath, "utf8"));
   const report = await evaluate(cases);
 
-  console.log(JSON.stringify(report, null, 2));
+  const output = JSON.stringify(report, null, 2);
+  if (outputPath) await fs.writeFile(outputPath, output, "utf8");
+  console.log(output);
 
   if (report.failed > 0) {
     process.exitCode = 1;

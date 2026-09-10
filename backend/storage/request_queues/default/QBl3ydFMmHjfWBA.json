@@ -1,9 +1,0 @@
-{
-	"id": "QBl3ydFMmHjfWBA",
-	"json": "{\"id\":\"QBl3ydFMmHjfWBA\",\"url\":\"https://stripe.com/in/atlas\",\"loadedUrl\":\"https://stripe.com/in/atlas\",\"uniqueKey\":\"https://stripe.com/in/atlas\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-09-10T09:11:44.850Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://stripe.com/in/atlas",
-	"url": "https://stripe.com/in/atlas"
-}

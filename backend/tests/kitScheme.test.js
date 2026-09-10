@@ -89,4 +89,21 @@ describe("updateKitSchema", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("accepts the required question categories", () => {
+    for (const category of ["technical", "behavioral", "system-design", "company-fit"]) {
+      const result = updateKitSchema.safeParse({
+        questions: [{
+          id: "q1",
+          requirement_ids: ["r1"],
+          category,
+          prompt: "Question",
+          answer_outline: "Answer",
+          difficulty: 2,
+        }],
+      });
+
+      expect(result.success).toBe(true);
+    }
+  });
 });

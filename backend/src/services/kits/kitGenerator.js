@@ -46,8 +46,13 @@ export const generateKit = async ({
   );
 
   // 3. Generate initial questions
+  const researchContext = research.pages
+    .map((page) => `${page.url}\n${page.text.slice(0, 2000)}`)
+    .join("\n\n")
+    .slice(0, 12000);
+
   const generated = await runStage("questions", () =>
-    generateQuestions(role.requirements)
+    generateQuestions(role.requirements, researchContext)
   );
 
   // 4. Normalize questions and assign stable IDs
@@ -171,6 +176,8 @@ export const generateKit = async ({
         research.companyBrief.summary,
       what_they_do:
         research.companyBrief.what_they_do,
+      interview_process:
+        research.companyBrief.interview_process,
       sources: research.pages.map(
         (page) => page.url
       ),

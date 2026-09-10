@@ -47,4 +47,13 @@ describe("sortPracticeItems", () => {
 
     expect(result.map((entry) => entry.item_id)).toEqual(["q1", "q3", "q2"]);
   });
+
+  it("puts least recently practiced first after the other priorities", () => {
+    const result = sortPracticeItems([
+      { ...item("q2", 1, "must", 2), updatedAt: "2026-09-10T10:00:00.000Z" },
+      { ...item("q1", 1, "must", 2), updatedAt: "2026-09-09T10:00:00.000Z" },
+    ]);
+
+    expect(result.map((entry) => entry.item_id)).toEqual(["q1", "q2"]);
+  });
 });

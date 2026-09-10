@@ -1,4 +1,5 @@
 export const extractPageContent = (page) => {
+  const MAX_PAGE_TEXT_LENGTH = 20_000;
   const title = page.title?.trim() || "";
 
   const headings = (page.headings || [])
@@ -7,7 +8,8 @@ export const extractPageContent = (page) => {
 
   const text = (page.text || "")
     .replace(/\s+/g, " ")
-    .trim();
+    .trim()
+    .slice(0, MAX_PAGE_TEXT_LENGTH);
 
   return {
     url: page.url,

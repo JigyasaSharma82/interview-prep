@@ -214,3 +214,18 @@ it("throws when a must-have requirement has no question", () => {
     "No question exists for must-have requirement r2"
   );
 });
+
+it("schedules one question once when it covers multiple must-have requirements", () => {
+  const multiRequirementQuestion = [{
+    ...questions[0],
+    requirement_ids: ["r1", "r2", "r3"],
+  }];
+
+  const schedule = allocateSchedule(
+    requirements,
+    multiRequirementQuestion,
+    1
+  );
+
+  expect(schedule.days[0].question_ids).toEqual(["q1"]);
+});

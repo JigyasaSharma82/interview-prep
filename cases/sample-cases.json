@@ -1,1 +1,32 @@
-[]
+[
+	{
+		"name": "normal-jd",
+		"jd": "Backend Developer. Requirements: Node.js, MongoDB, and REST APIs. Nice to have: Docker. Responsibilities: build APIs.",
+		"company_url": "https://example.com",
+		"days": 7
+	},
+	{
+		"name": "thin-jd",
+		"jd": "Backend developer. Must know JavaScript.",
+		"company_url": "https://example.com",
+		"days": 1
+	},
+	{
+		"name": "unreachable-company",
+		"jd": "Required: backend API experience.",
+		"company_url": "https://company-does-not-exist.invalid",
+		"days": 5
+	},
+	{
+		"name": "no-hiring-page",
+		"jd": "Required: Python and SQL. Preferred: cloud experience.",
+		"company_url": "https://example.com",
+		"days": 14
+	},
+	{
+		"name": "relative-links",
+		"jd": "Must have Node.js experience. Bonus: system design.",
+		"company_url": "https://www.iana.org/help/example-domains",
+		"days": 60
+	}
+]

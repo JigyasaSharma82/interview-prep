@@ -1,9 +1,0 @@
-{
-	"id": "BQRvJsgjIiz3asu",
-	"json": "{\"id\":\"BQRvJsgjIiz3asu\",\"url\":\"https://google.com\",\"loadedUrl\":\"https://www.google.com/\",\"uniqueKey\":\"https://google.com\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-09-10T09:17:01.165Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://google.com",
-	"url": "https://google.com"
-}
