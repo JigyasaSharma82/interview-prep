@@ -21,7 +21,7 @@ app.use((_req, res, next) => {
 app.use(
   cors({
     origin: [
-      env.frontendUrl,
+      https://interview-prep-frontend-omega.vercel.app/,
       ...(env.nodeEnv === "development"
         ? ["http://localhost:3000", "http://127.0.0.1:3000"]
         : []),
