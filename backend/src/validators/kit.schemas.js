@@ -119,3 +119,12 @@ export const updateKitSchema = z.object({
     })
     .optional(),
 }).strict();
+
+export const regenerateCategorySchema = z.object({
+  category: z.enum([
+    "technical",
+    "behavioral",
+    "system-design",
+    "company-fit",
+  ]),
+});

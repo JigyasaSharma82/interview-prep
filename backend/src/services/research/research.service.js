@@ -102,8 +102,32 @@ export const researchCompany = async (companyUrl) => {
     })
   );
 
-  const publicInterviewResearch =
-    await researchPublicInterviewProcess(companyUrl);
+  console.log("🔎 PUBLIC INTERVIEW RESEARCH STARTED");
+
+  let publicInterviewResearch;
+  try {
+    publicInterviewResearch = await withTimeout(
+      researchPublicInterviewProcess(companyUrl),
+      45_000,
+      "Public interview research timed out"
+    );
+  } catch (error) {
+    console.error(
+      "Public interview research unavailable:",
+      error.message
+    );
+    publicInterviewResearch = {
+      pages: [],
+      sources: [],
+      unavailable: true,
+    };
+  }
+
+  console.log(
+    "🔎 PUBLIC INTERVIEW RESEARCH FINISHED:",
+    publicInterviewResearch.sources.length,
+    "sources"
+  );
 
   // 7. Combine all crawled pages
   const allPages = [

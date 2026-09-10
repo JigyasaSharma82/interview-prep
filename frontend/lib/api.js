@@ -3,19 +3,29 @@ export async function apiRequest(path, options = {}) {
   const token = typeof window !== "undefined"
     ? window.localStorage.getItem("prep_token")
     : null;
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...options,
-    cache: "no-store",
-    headers: {
-      ...(options.headers || {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    credentials: "include",
-  });
+  const requestUrl = `${baseUrl}${path}`;
+  let response;
+
+  try {
+    response = await fetch(requestUrl, {
+      ...options,
+      cache: "no-store",
+      headers: {
+        ...(options.headers || {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      credentials: "include",
+    });
+  } catch (error) {
+    throw new Error(
+      `Could not reach the API at ${requestUrl}. Check that the backend is running and CORS allows this frontend origin.`
+    );
+  }
 
   if (!response.ok) {
     const body = await response.json().catch(() => null);
-    throw new Error(body?.message || `API request failed: ${response.status}`);
+    const message = body?.message || body?.error || `API request failed: ${response.status}`;
+    throw new Error(message);
   }
 
   return response.json();

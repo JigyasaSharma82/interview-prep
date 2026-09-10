@@ -9,6 +9,7 @@ import { generateFlashcards } from "../generation/flashcardGenerator.js";
 import { allocateSchedule } from "../scheduling/scheduleAllocator.js";
 import { validateCompleteKit } from "./kitValidator.js";
 import { GenerationError } from "../../utils/errors.js";
+import { normalizeGeneratedQuestion } from "./questionNormalizer.js";
 
 export const generateKit = async ({
   jd,
@@ -59,13 +60,18 @@ export const generateKit = async ({
   let questions = generated.questions.map(
     (question, index) => ({
       id: `q${index + 1}`,
-      requirement_ids: [
-        question.requirement_id,
-      ],
-      category: question.category,
-      prompt: question.prompt,
-      answer_outline: question.answer_outline,
-      difficulty: question.difficulty,
+      ...(() => {
+        console.log(
+          "[QUESTION GENERATION] generated question: requirement_id =",
+          question.requirement_id
+        );
+        return {};
+      })(),
+      ...normalizeGeneratedQuestion(
+        question,
+        role.requirements,
+        `Generated question q${index + 1}`
+      ),
     })
   );
 
@@ -99,14 +105,11 @@ export const generateKit = async ({
       extraGenerated.questions.map(
         (question, index) => ({
           id: `q${questions.length + index + 1}`,
-          requirement_ids: [
-            question.requirement_id,
-          ],
-          category: question.category,
-          prompt: question.prompt,
-          answer_outline:
-            question.answer_outline,
-          difficulty: question.difficulty,
+          ...normalizeGeneratedQuestion(
+            question,
+            role.requirements,
+            `Generated coverage question ${questions.length + index + 1}`
+          ),
         })
       );
 
