@@ -1,5 +1,5 @@
 export async function apiRequest(path, options = {}) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || https://interview-prep-5-3w8j.onrender.com;
   const token = typeof window !== "undefined"
     ? window.localStorage.getItem("prep_token")
     : null;
