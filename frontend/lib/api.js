@@ -5,6 +5,7 @@ export async function apiRequest(path, options = {}) {
     : null;
   const response = await fetch(`${baseUrl}${path}`, {
     ...options,
+    cache: "no-store",
     headers: {
       ...(options.headers || {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

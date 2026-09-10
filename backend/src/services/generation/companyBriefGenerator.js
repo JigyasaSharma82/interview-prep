@@ -60,6 +60,6 @@ ${researchText}
       responseSchema: companyBriefSchema,
     },
   });
-
+    console.log("Company brief generation response:", response.text);
   return JSON.parse(response.text);
 };

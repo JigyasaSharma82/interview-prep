@@ -18,9 +18,12 @@ export const generateKit = async ({
 }) => {
   const runStage = async (stage, operation) => {
     await onStage(stage);
+    console.log(`STAGE: ${stage}`);
 
     try {
-      return await operation();
+      const result = await operation();
+      console.log(`STAGE COMPLETED: ${stage}`);
+      return result;
     } catch (error) {
       if (error instanceof GenerationError) {
         throw error;

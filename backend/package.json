@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js",
+    "dev": "nodemon --watch src --ignore storage --ignore logs --ignore .crawlee src/server.js",
     "start": "node src/server.js",
     "test": "vitest run",
     "test:watch": "vitest",

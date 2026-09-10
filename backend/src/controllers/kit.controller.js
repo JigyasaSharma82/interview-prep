@@ -9,18 +9,46 @@ const getGenerationKey = ({ jd, company_url, days }) =>
     .update(JSON.stringify({ jd, company_url, days }))
     .digest("hex");
 
+const KIT_GENERATION_TIMEOUT_MS = 10 * 60 * 1000;
+
+const withTimeout = (promise, milliseconds) => {
+  let timeoutId;
+
+  const timeout = new Promise((_, reject) => {
+    timeoutId = setTimeout(
+      () => reject(new Error("Kit generation timed out")),
+      milliseconds,
+    );
+  });
+
+  return Promise.race([promise, timeout]).finally(() => {
+    clearTimeout(timeoutId);
+  });
+};
+
 const runKitGeneration = async (kit, input) => {
+  console.log("KIT GENERATION STARTED", kit._id.toString());
+  let generationActive = true;
+  let currentStage = "queued";
+
   try {
     kit.generation_stage = "generating";
     await kit.save();
 
-    const generatedKit = await generateKit({
-      ...input,
-      onStage: async (stage) => {
-        kit.generation_stage = stage;
-        await kit.save();
-      },
-    });
+    const generatedKit = await withTimeout(
+      generateKit({
+        ...input,
+        onStage: async (stage) => {
+          if (!generationActive) return;
+
+          currentStage = stage;
+          console.log(`STAGE: ${stage}`);
+          kit.generation_stage = stage;
+          await kit.save();
+        },
+      }),
+      KIT_GENERATION_TIMEOUT_MS,
+    );
 
     Object.assign(kit, generatedKit, {
       generation_status: "completed",
@@ -28,16 +56,35 @@ const runKitGeneration = async (kit, input) => {
       generation_error: null,
     });
     await kit.save();
+    console.log("KIT GENERATION COMPLETED", kit._id.toString());
   } catch (error) {
+    generationActive = false;
+
+    console.log("KIT GENERATION FAILED", kit._id.toString());
+    console.log("Stage:", error.stage || currentStage);
+    console.log("Error:", error.message);
+
     kit.generation_status = "failed";
-    kit.generation_stage = error.stage || "failed";
+    kit.generation_stage = error.stage || currentStage || "failed";
     kit.generation_error = error.message || "Kit generation failed";
+
+    console.log("Saving failed kit status...");
+
     await kit.save();
+
+    console.log("Failed status saved:", {
+      id: kit._id,
+      status: kit.generation_status,
+      stage: kit.generation_stage,
+    });
+  } finally {
+    generationActive = false;
   }
 };
 
 export const createKit = async (req, res, next) => {
   try {
+    console.log("Received request to create kit:", req.body);
     const { jd, company_url, days } = req.body;
     const generationKey = getGenerationKey({
       jd,
@@ -52,11 +99,22 @@ export const createKit = async (req, res, next) => {
     });
 
     if (existingKit) {
-      return res.status(409).json({
-        success: false,
-        message: "This kit is already being generated",
-        data: existingKit,
-      });
+      const staleBefore = new Date(Date.now() - KIT_GENERATION_TIMEOUT_MS);
+
+      if (existingKit.updatedAt <= staleBefore) {
+        existingKit.generation_status = "failed";
+        existingKit.generation_stage = "failed";
+        existingKit.generation_error =
+          "Kit generation expired before completion";
+        await existingKit.save();
+      } else {
+        console.log("Kit already being generated:", existingKit);
+        return res.status(409).json({
+          success: false,
+          message: "This kit is already being generated",
+          data: existingKit,
+        });
+      }
     }
 
     const kit = await Kit.create({
@@ -88,6 +146,7 @@ export const createKit = async (req, res, next) => {
   }
 };
 export const getKits = async (req, res, next) => {
+  console.log("Received request to get kits for user:", req.user.id);
   try {
     const kits = await Kit.find({
       user_id: req.user.id,
@@ -104,6 +163,7 @@ export const getKits = async (req, res, next) => {
 export const getKitById = async (req, res, next) => {
   try {
     const { kitId } = req.params;
+    console.log("[kit] GET result requested:", kitId);
 
     const kit = await Kit.findOne({
       _id: kitId,
@@ -116,6 +176,13 @@ export const getKitById = async (req, res, next) => {
         message: "Kit not found",
       });
     }
+
+    console.log("[kit] GET result:", {
+      id: kit._id.toString(),
+      status: kit.generation_status,
+      stage: kit.generation_stage,
+      questionCount: kit.questions?.length || 0,
+    });
 
     res.status(200).json({
       success: true,
