@@ -1,5 +1,5 @@
 import { CheerioCrawler } from "crawlee";
-import { getValidInternalLinks } from "../../utils/url.js";
+import { getValidInternalLinks } from "../utils/url.js";
 
 export const crawlSite = async (startUrl, maxRequests = 10) => {
   const pages = [];

@@ -4,7 +4,7 @@ import {
 } from "../generation/questionGenerator.js";
 import { researchCompany } from "../research/research.service.js";
 import { allocateSchedule } from "../scheduling/scheduleAllocator.js";
-import { checkCoverage } from "../coverage/coverageChecker.js";
+import { checkCoverage } from "../coveragee/coverageChecker.js";
 import { validateCompleteKit } from "./kitValidator.js";
 import {
   normalizeGeneratedQuestion,

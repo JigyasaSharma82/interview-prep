@@ -1,4 +1,4 @@
-import { validateExternalUrl } from "../../utils/url.js";
+import { validateExternalUrl } from "../utils/url.js";
 
 const SEARCH_TIMEOUT_MS = 10_000;
 const MAX_SEARCH_BYTES = 500_000;

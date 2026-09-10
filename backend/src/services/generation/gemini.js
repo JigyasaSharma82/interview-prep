@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import env from "../../config/env.js";
-import { retry } from "../../utils/retry.js";
+import { retry } from "../utils/retry.js";
 
 if (!env.geminiApiKey){
   throw new Error("GEMINI_API_KEY is not configured");

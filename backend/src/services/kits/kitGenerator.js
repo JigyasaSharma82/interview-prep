@@ -1,6 +1,6 @@
 import { extractRequirements } from "../generation/requirementExtractor.js";
 import { researchCompany } from "../research/research.service.js";
-import { checkCoverage } from "../coverage/coverageChecker.js";
+import { checkCoverage } from "../coveragee/coverageChecker.js";
 import {
   generateQuestions,
   generateQuestionsForRequirements,
@@ -8,7 +8,7 @@ import {
 import { generateFlashcards } from "../generation/flashcardGenerator.js";
 import { allocateSchedule } from "../scheduling/scheduleAllocator.js";
 import { validateCompleteKit } from "./kitValidator.js";
-import { GenerationError } from "../../utils/errors.js";
+import { GenerationError } from "../utils/errors.js";
 import { normalizeGeneratedQuestion } from "./questionNormalizer.js";
 
 export const generateKit = async ({

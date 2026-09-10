@@ -1,4 +1,4 @@
-import { validateExternalUrl } from "../../utils/url.js";
+import { validateExternalUrl } from "../utils/url.js";
 import { crawlSite } from "./crawler.js";
 import { rankLinks } from "./linkRanker.js";
 import { generateCompanyBrief } from "../generation/companyBriefGenerator.js";
