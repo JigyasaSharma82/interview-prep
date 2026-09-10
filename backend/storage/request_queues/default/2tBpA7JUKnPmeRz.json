@@ -1,9 +1,0 @@
-{
-	"id": "2tBpA7JUKnPmeRz",
-	"json": "{\"id\":\"2tBpA7JUKnPmeRz\",\"url\":\"https://www.startappss.com/about\",\"loadedUrl\":\"https://www.startappss.com/about\",\"uniqueKey\":\"https://www.startappss.com/about\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-09-10T11:26:42.050Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://www.startappss.com/about",
-	"url": "https://www.startappss.com/about"
-}
